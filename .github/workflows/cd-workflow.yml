@@ -19,7 +19,7 @@ jobs:
           repository: shrecki/polling-bot/polling-bot
           tag_with_ref: true
       - name: Push to Dockerhub
-        uses: docker/build-push-action@v1
+        uses: mr-smithers-excellent/docker-build-push@v4
         with:
           registry: docker.io
           image: imagebin/polling-bot

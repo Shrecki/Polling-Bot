@@ -215,13 +215,35 @@ def get_from_and_to_optimistic(curr_date: datetime.datetime, n_weeks: int):
     to_ = int((convert_date_to_unix_timestamp(end_date) + convert_weeks_to_unix_timestamp(n_weeks))*1000)
     return from_, to_
 
+
 def get_from_strict(curr_date: datetime.datetime):
     from_ = int(convert_date_to_unix_timestamp(curr_date)*1000)
     return from_
 
-def convert_timestamp_to_date(timestamp: int, is_milliseconds=True):
+
+def convert_timestamp_to_date(timestamp: int, is_milliseconds=True, french_time=False):
     coeff = 1.0
     if is_milliseconds:
         coeff = 1000.0
-    return datetime.datetime.fromtimestamp(int(timestamp/coeff), tz=datetime.timezone.utc)
+    time_zone = datetime.timezone.utc
+    if french_time:
+        time_zone = datetime.timezone(datetime.timedelta(hours=2))
+    return datetime.datetime.fromtimestamp(int(timestamp/coeff), tz=time_zone)
 
+
+def convert_number_to_day_string(day_number: int):
+    if day_number < 0 or day_number > 6:
+        raise ValueError('Expected day_number to be strictly between 0 and 6 (both included), but got {} instead.'.format(day_number))
+    days = {0: 'Monday', 1: 'Tuesday', 2: 'Wednesday', 3: 'Thursday', 4: 'Friday', 5: 'Saturday', 6: 'Sunday'}
+
+    return days[day_number]
+
+
+def convert_number_to_month_string(month_number: int):
+    if month_number < 1 or month_number > 12:
+        raise ValueError('Expected month_number to be strictly between 1 and 12 (both included), but got {} instead.'.
+                         format(month_number))
+    months = {1: 'January', 2: 'February', 3: 'March', 4: 'April', 5: 'May', 6: 'June', 7: 'July', 8: 'August',
+              9: 'September', 10: 'October', 11: 'November', 12: 'December'}
+
+    return months[month_number]

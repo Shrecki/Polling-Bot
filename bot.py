@@ -154,12 +154,14 @@ class CustomBot(commands.Bot):
             days = np.floor(interval/(3600*24))
             hours = np.floor((interval-days*3600*24)/3600)
             minutes = np.floor((interval - days*3600*24 - hours * 3600)/60)
-            await self.send("Based on members availability, next session would be " +
-                            core.convert_timestamp_to_date(next_session[0]).strftime('%Y-%m-%d %H:%M') +
-                            " and would last " + str(days) + " days, " +
-                            str(hours) +
-                            " hours  and " +
-                            str(minutes) + " minutes")
+
+            time = core.convert_timestamp_to_date(next_session[0], french_time=True)
+            time_rep = time.strftime('%H:%M')
+            time_end = core.convert_timestamp_to_date(next_session[1], french_time=True).strftime('%H:%M')
+
+            await self.send("Based on members availability, next session would be **" +
+                            core.convert_number_to_day_string(time.weekday()) + " the " + str(time.day) + " of " +
+                             core.convert_number_to_month_string(time.month) + " from " + time.strftime('%H:%M') + " to " + time_end + "**")
 
             for member in missing_data_members:
                 await self.send("<@{}> did not fill availabilities.".format(member.id))

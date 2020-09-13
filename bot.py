@@ -3,7 +3,6 @@ from discord.ext import commands
 from dotenv import load_dotenv
 import core
 import numpy as np
-from datetime import date
 import datetime
 
 load_dotenv()

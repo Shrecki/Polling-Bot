@@ -141,10 +141,18 @@ def convert_player_json(player_id, start_time, start_time_strict, end_time):
     Method which, provided a player id, queries the BDD for its JSON, reads its, and converts it to the appropriate
     array. Note that if the player hasn't filled his/her availabilities (meaning an empty JSON was retrieved), this
     method returns a None instead of an array.
-    :param player_id:
-    :param start_time:
-    :param end_time:
-    :return:
+    :param player_id: the id of the player (Discord id)
+    :param start_time: start time. This argument is helpful to provide the day from which to start to look for requests,
+    potentially including intervals that started before the request was issued.
+    :param start_time_strict: strict starting time of the request. This one will be helpful to filter out intervals
+    starting before start_time_strict. All start_time inferior to start_time_strict will be included and then truncated
+    to start_time_strict .
+    :param end_time: end time of tolerated intervals. Do note that only start time of intervals are filtered through
+    this end_time. This is because an interval might very well be valid by starting before end_time, but ending after it.
+    We don't exclude it in this case but truncate its end_time to end_time.
+    :return: player_array, array containing intervals truncated to fall between start_time_strict and end_time, by retaining
+    all intervals that have a start_time between start_time and end_time. Intervals are returned sorted by start_time in
+    increasing order.
     """
     player_json = get_player_json(player_id, start_time, end_time)
     player_array = None

@@ -15,9 +15,9 @@ class MyTestCase(unittest.TestCase):
 
         print(find_intersections([array_p_1], minimum_length=4))
 
-        player_0_data = convert_player_json(188626510901542912, 0, 90000)
-        player_1_data = convert_player_json(265523588918935552, 0, 90000)
-        player_2_data = convert_player_json(298673420181438465, 0, 90000)
+        player_0_data = convert_player_json(188626510901542912, 0, 0, 90000)
+        player_1_data = convert_player_json(265523588918935552, 0, 0, 90000)
+        player_2_data = convert_player_json(298673420181438465, 0, 0, 90000)
 
         assert (np.all(player_0_data == array_p_1))
         assert (np.all(player_1_data == array_p_2))

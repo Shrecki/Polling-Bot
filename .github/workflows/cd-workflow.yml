@@ -1,0 +1,32 @@
+name: Docker CD
+on:
+  push:
+    branches:
+      - master
+jobs:
+  Build-and-Push-Docker-Image:
+    runs-on: ubuntu-latest
+    name: Docker Build, Tag, Push
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v1
+      - name: Push to Github Packages
+        uses: docker/build-push-action@v1
+        with:
+          username: ${{github.actor}}
+          password: ${{secrets.GITHUB_TOKEN}}
+          registry: docker.pkg.github.com
+          repository: Shrecki/polling-bot/polling-bot
+          tag_with_ref: true
+      - name: Push to Dockerhub
+        uses: docker/login-action@v1 
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+      - name: Build container image
+        uses: docker/build-push-action@v2
+        with:
+          push: true
+          tags: user/app:latest
+          secrets: |
+            GIT_AUTH_TOKEN=${{ github.token }}

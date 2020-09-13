@@ -161,12 +161,36 @@ class CustomBot(commands.Bot):
                 time_rep = time.strftime('%H:%M')
                 time_end = core.convert_timestamp_to_date(next_session[1], french_time=True).strftime('%H:%M')
 
-                await self.send("Based on members availability, next session would be **" +
-                                core.convert_number_to_day_string(time.weekday()) + " the " + str(time.day) + " of " +
-                                 core.convert_number_to_month_string(time.month) + " from " + time.strftime('%H:%M') + " to " + time_end + "**")
+                hour_strings = ""
+                if hours == 1:
+                    hour_strings = str(hours) + " hour "
+                if hours > 1:
+                    hour_strings = str(hours) + " hours "
 
+                minute_strings = ""
+
+                if minutes == 1:
+                    minute_strings = str(minutes) + " minute "
+                if minutes > 1 :
+                    minute_strings = str(minutes) + " minutes "
+
+                inter_str = ""
+                if hour_strings != "" and minute_strings != "":
+                    inter_str = "and "
+
+                await self.send("Based on members availability, next session (lasting at least " + hour_strings +
+                                inter_str + minute_strings + ") would be **" +
+                                core.convert_number_to_day_string(time.weekday()) + " the " + str(time.day) + " of " +
+                                core.convert_number_to_month_string(time.month) + " from " + time.strftime('%H:%M') +
+                                " to " + time_end + "**")
+
+        missing_members_string = ""
         for member in missing_data_members:
-            await self.send("<@{}> did not fill availabilities.".format(member.id))
+            missing_members_string += " <@{}>, ".format(member.id)
+
+        if missing_members_string != "":
+            missing_members_string += "did not fill availabilities. Please go fill it at: https://dispos.pocot.fr/."
+            await self.send(missing_members_string)
 
 
     @commands.command(name='help', help='shows help (duh)')

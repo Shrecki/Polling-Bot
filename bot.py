@@ -138,33 +138,35 @@ class CustomBot(commands.Bot):
                 missing_data_members.append(member)
             else:
                 overall_data.append(member_data)
-
-        intersections = core.find_intersections(overall_data, minimum_length=minimum_length)
-
-        if len(intersections) == 0:
-            msg= "Based on members availability, a game can't be scheduled in the next "+str(n_weeks) + " week"
-            if n_weeks > 1:
-                msg += 's'
-            await self.send(msg)
+        if len(missing_data_members) == len(members_of_interest):
+            await self.send("No one filled their availabilities! Couldn't find a date, please fill your availabilities.")
         else:
-            next_session = intersections[0]
-            print('Next_session: {}'.format(next_session[0]))
-            print('Next_session end: {}'.format(next_session[1]))
-            interval = (next_session[1]-next_session[0])/1000
-            days = np.floor(interval/(3600*24))
-            hours = np.floor((interval-days*3600*24)/3600)
-            minutes = np.floor((interval - days*3600*24 - hours * 3600)/60)
+            intersections = core.find_intersections(overall_data, minimum_length=minimum_length)
 
-            time = core.convert_timestamp_to_date(next_session[0], french_time=True)
-            time_rep = time.strftime('%H:%M')
-            time_end = core.convert_timestamp_to_date(next_session[1], french_time=True).strftime('%H:%M')
+            if len(intersections) == 0:
+                msg= "Based on members availability, a game can't be scheduled in the next "+str(n_weeks) + " week"
+                if n_weeks > 1:
+                    msg += 's'
+                await self.send(msg)
+            else:
+                next_session = intersections[0]
+                print('Next_session: {}'.format(next_session[0]))
+                print('Next_session end: {}'.format(next_session[1]))
+                interval = (next_session[1]-next_session[0])/1000
+                days = np.floor(interval/(3600*24))
+                hours = np.floor((interval-days*3600*24)/3600)
+                minutes = np.floor((interval - days*3600*24 - hours * 3600)/60)
 
-            await self.send("Based on members availability, next session would be **" +
-                            core.convert_number_to_day_string(time.weekday()) + " the " + str(time.day) + " of " +
-                             core.convert_number_to_month_string(time.month) + " from " + time.strftime('%H:%M') + " to " + time_end + "**")
+                time = core.convert_timestamp_to_date(next_session[0], french_time=True)
+                time_rep = time.strftime('%H:%M')
+                time_end = core.convert_timestamp_to_date(next_session[1], french_time=True).strftime('%H:%M')
 
-            for member in missing_data_members:
-                await self.send("<@{}> did not fill availabilities.".format(member.id))
+                await self.send("Based on members availability, next session would be **" +
+                                core.convert_number_to_day_string(time.weekday()) + " the " + str(time.day) + " of " +
+                                 core.convert_number_to_month_string(time.month) + " from " + time.strftime('%H:%M') + " to " + time_end + "**")
+
+        for member in missing_data_members:
+            await self.send("<@{}> did not fill availabilities.".format(member.id))
 
 
     @commands.command(name='help', help='shows help (duh)')
